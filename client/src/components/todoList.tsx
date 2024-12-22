@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { CSSProperties } from "react";
 import { trpc } from "../../utils/trpc";
 
@@ -63,6 +64,10 @@ const TodoList = () => {
   console.log(test.data);
   const allTodos = trpc.getTodos.useQuery();
   console.log(allTodos.data);
+  const [inputValue, setInputValue] = useState("");
+
+  const addTodo = trpc.addTodo.useMutation();
+
   return (
     <div style={styles.container}>
       <div style={styles.innerContainer}>
@@ -71,8 +76,10 @@ const TodoList = () => {
           type="text"
           placeholder="What needs to be done?"
           style={styles.input}
+          value={inputValue}
+          onChange={(e) => setInputValue(e.target.value)}
         />
-        <button style={styles.addButton}>Add Todo</button>
+        <button style={styles.addButton} onClick={() => addTodo.mutate(inputValue)}>Add Todo</button>
         <ul style={styles.list}>
           {allTodos.data?.map((todo) => (
             <li style={styles.listItem} key={todo.id}>

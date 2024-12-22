@@ -2,6 +2,7 @@ import express from "express";
 import { initTRPC } from "@trpc/server";
 import * as trpcExpress from "@trpc/server/adapters/express";
 import cors from "cors";
+import { z } from "zod";
 
 const app = express();
 const PORT = 5000;
@@ -24,6 +25,10 @@ const publicProcedure = trpc.procedure;
 const appRouter = router({
   test: publicProcedure.query(() => "Query Response"),
   getTodos: publicProcedure.query(() => todoList),
+  addTodo: publicProcedure.input(z.string()).mutation(({ input }) => {
+    todoList.push({ id: todoList.length + 1, content: input });
+    return todoList;
+  }),
 });
 
 app.use(
