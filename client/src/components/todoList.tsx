@@ -66,7 +66,11 @@ const TodoList = () => {
   console.log(allTodos.data);
   const [inputValue, setInputValue] = useState("");
 
-  const addTodo = trpc.addTodo.useMutation();
+  const addTodo = trpc.addTodo.useMutation({
+    onSettled: () => {
+      allTodos.refetch();
+    },
+  });
 
   return (
     <div style={styles.container}>
@@ -79,7 +83,15 @@ const TodoList = () => {
           value={inputValue}
           onChange={(e) => setInputValue(e.target.value)}
         />
-        <button style={styles.addButton} onClick={() => addTodo.mutate(inputValue)}>Add Todo</button>
+        <button
+          style={styles.addButton}
+          onClick={() => {
+            addTodo.mutate(inputValue);
+            setInputValue("");
+          }}
+        >
+          Add Todo
+        </button>
         <ul style={styles.list}>
           {allTodos.data?.map((todo) => (
             <li style={styles.listItem} key={todo.id}>
