@@ -34,3 +34,5 @@ app.use(
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
+
+export type AppRouter = typeof appRouter;
