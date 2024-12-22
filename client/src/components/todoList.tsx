@@ -74,10 +74,12 @@ const TodoList = () => {
         />
         <button style={styles.addButton}>Add Todo</button>
         <ul style={styles.list}>
-          <li style={styles.listItem}>
-            TRPCの勉強
-            <span style={styles.deleteButton}>✖</span>
-          </li>
+          {allTodos.data?.map((todo) => (
+            <li style={styles.listItem} key={todo.id}>
+              {todo.content}
+              <span style={styles.deleteButton}>✖</span>
+            </li>
+          ))}
         </ul>
       </div>
     </div>
