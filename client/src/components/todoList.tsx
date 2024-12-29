@@ -63,19 +63,22 @@ const TodoList = () => {
   const test = trpc.test.useQuery();
   console.log(test.data);
   const allTodos = trpc.getTodos.useQuery();
-  console.log(allTodos.data);
+  const allMemos = trpc.getMemos.useQuery();
   const [inputTaskName, setInputTaskName] = useState("");
   const [inputDueDate, setInputDueDate] = useState(new Date());
+  const [inputMemo, setInputMemo] = useState("");
 
   const addTodo = trpc.addTodo.useMutation({
     onSettled: () => {
       allTodos.refetch();
+      allMemos.refetch();
     },
   });
 
   const deleteTodo = trpc.deleteTodo.useMutation({
     onSettled: () => {
       allTodos.refetch();
+      allMemos.refetch();
     },
   });
 
@@ -96,32 +99,44 @@ const TodoList = () => {
           value={inputDueDate.toISOString().split("T")[0]}
           onChange={(e) => setInputDueDate(new Date(e.target.value))}
         />
+        <input
+          type="text"
+          placeholder="Memo"
+          style={styles.input}
+          value={inputMemo}
+          onChange={(e) => setInputMemo(e.target.value)}
+        />
         <button
           style={styles.addButton}
           onClick={() => {
             addTodo.mutate({
               content: inputTaskName,
               dueDate: inputDueDate,
+              memo: inputMemo,
             });
             setInputTaskName("");
             setInputDueDate(new Date());
+            setInputMemo("");
           }}
         >
           Add Todo
         </button>
         <ul style={styles.list}>
           {allTodos.data?.map((todo) => (
-            <li style={styles.listItem} key={todo.id}>
+            <div style={styles.listItem} key={todo.id}>
               {todo.content} 期日: {todo.dueDate.toLocaleDateString()}
-              <span
-                style={styles.deleteButton}
+              <div>
+                {allMemos.data?.find((memo) => memo.todoId === todo.id)?.memo}
+              </div>
+                <span
+                  style={styles.deleteButton}
                 onClick={() => {
                   deleteTodo.mutate(todo.id);
                 }}
               >
                 ✖
               </span>
-            </li>
+            </div>
           ))}
         </ul>
       </div>

@@ -15,9 +15,20 @@ interface Todo {
   dueDate: Date;
 }
 
+interface TodoMemo {
+  id: number;
+  memo: string;
+  todoId: number;
+}
+
 const todoList: Todo[] = [
   { id: 1, content: "test", dueDate: new Date() },
   { id: 2, content: "test2", dueDate: new Date() },
+];
+
+const todoMemoList: TodoMemo[] = [
+  { id: 1, memo: "memo1", todoId: 1 },
+  { id: 2, memo: "memo2", todoId: 2 },
 ];
 
 const trpc = initTRPC.create({
@@ -29,15 +40,23 @@ const publicProcedure = trpc.procedure;
 const appRouter = router({
   test: publicProcedure.query(() => "Query Response"),
   getTodos: publicProcedure.query(() => todoList),
+  getMemos: publicProcedure.query(() => todoMemoList),
   addTodo: publicProcedure.input(z.object({
     content: z.string(),
     dueDate: z.date(),
+    memo: z.string(),
     })
   ).mutation(({ input }) => {
+    const newTodoId = todoList.length + 1;
     todoList.push({
-      id: todoList.length + 1,
+      id: newTodoId,
       content: input.content,
       dueDate: input.dueDate,
+    });
+    todoMemoList.push({
+      id: todoMemoList.length + 1,
+      memo: input.memo,
+      todoId: newTodoId,
     });
     return todoList;
   }),
