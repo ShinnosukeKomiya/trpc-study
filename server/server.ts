@@ -3,6 +3,7 @@ import { initTRPC } from "@trpc/server";
 import * as trpcExpress from "@trpc/server/adapters/express";
 import cors from "cors";
 import { z } from "zod";
+import superjson from "superjson";
 
 const app = express();
 const PORT = 5000;
@@ -19,7 +20,9 @@ const todoList: Todo[] = [
   { id: 2, content: "test2", dueDate: new Date() },
 ];
 
-const trpc = initTRPC.create();
+const trpc = initTRPC.create({
+  transformer: superjson,
+});
 const router = trpc.router;
 const publicProcedure = trpc.procedure;
 

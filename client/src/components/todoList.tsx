@@ -64,7 +64,8 @@ const TodoList = () => {
   console.log(test.data);
   const allTodos = trpc.getTodos.useQuery();
   console.log(allTodos.data);
-  const [inputValue, setInputValue] = useState("");
+  const [inputTaskName, setInputTaskName] = useState("");
+  const [inputDueDate, setInputDueDate] = useState(new Date());
 
   const addTodo = trpc.addTodo.useMutation({
     onSettled: () => {
@@ -86,14 +87,24 @@ const TodoList = () => {
           type="text"
           placeholder="What needs to be done?"
           style={styles.input}
-          value={inputValue}
-          onChange={(e) => setInputValue(e.target.value)}
+          value={inputTaskName}
+          onChange={(e) => setInputTaskName(e.target.value)}
+        />
+        <input
+          type="date"
+          style={styles.input}
+          value={inputDueDate.toISOString().split("T")[0]}
+          onChange={(e) => setInputDueDate(new Date(e.target.value))}
         />
         <button
           style={styles.addButton}
           onClick={() => {
-            addTodo.mutate(inputValue);
-            setInputValue("");
+            addTodo.mutate({
+              content: inputTaskName,
+              dueDate: inputDueDate,
+            });
+            setInputTaskName("");
+            setInputDueDate(new Date());
           }}
         >
           Add Todo
