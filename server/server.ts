@@ -11,11 +11,12 @@ app.use(cors());
 interface Todo {
   id: number;
   content: string;
+  dueDate: Date;
 }
 
 const todoList: Todo[] = [
-  { id: 1, content: "test" },
-  { id: 2, content: "test2" },
+  { id: 1, content: "test", dueDate: new Date() },
+  { id: 2, content: "test2", dueDate: new Date() },
 ];
 
 const trpc = initTRPC.create();
@@ -25,8 +26,16 @@ const publicProcedure = trpc.procedure;
 const appRouter = router({
   test: publicProcedure.query(() => "Query Response"),
   getTodos: publicProcedure.query(() => todoList),
-  addTodo: publicProcedure.input(z.string()).mutation(({ input }) => {
-    todoList.push({ id: todoList.length + 1, content: input });
+  addTodo: publicProcedure.input(z.object({
+    content: z.string(),
+    dueDate: z.date(),
+    })
+  ).mutation(({ input }) => {
+    todoList.push({
+      id: todoList.length + 1,
+      content: input.content,
+      dueDate: input.dueDate,
+    });
     return todoList;
   }),
   deleteTodo: publicProcedure.input(z.number()).mutation(({ input }) => {
