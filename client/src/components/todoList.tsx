@@ -112,7 +112,7 @@ const TodoList = () => {
         <ul style={styles.list}>
           {allTodos.data?.map((todo) => (
             <li style={styles.listItem} key={todo.id}>
-              {todo.content}
+              {todo.content} 期日: {todo.dueDate.toLocaleDateString()}
               <span
                 style={styles.deleteButton}
                 onClick={() => {
